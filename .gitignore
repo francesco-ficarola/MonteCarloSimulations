@@ -1,2 +1,10 @@
 bin/
 .settings/
+
+# Maven
+target/
+
+# Intellij IDEA
+.idea/
+*.iml
+*.ipr
