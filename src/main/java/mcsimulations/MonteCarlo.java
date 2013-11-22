@@ -1,4 +1,4 @@
-package mcsimulation;
+package mcsimulations;
 
 /**
  *  Monte Carlo Simulations

@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>project.montecarlo</groupId>
-    <artifactId>simulation</artifactId>
-    <name>Monte Carlo Simulation</name>
+    <artifactId>mcsimulations</artifactId>
+    <name>Monte Carlo Simulations</name>
     <version>1.0-SNAPSHOT</version>
 
     <build>
@@ -31,7 +31,7 @@
                     <finalName>MonteCarlo</finalName>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>mcsimulation.MonteCarlo</Main-Class>
+                            <Main-Class>mcsimulations.MonteCarlo</Main-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -56,7 +56,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>mcsimulation.MonteCarlo</mainClass>
+                            <mainClass>mcsimulations.MonteCarlo</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
