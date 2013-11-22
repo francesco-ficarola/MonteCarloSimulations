@@ -1,4 +1,4 @@
-/**
+package mcsimulation; /**
  *  Monte Carlo Simulations
  *  Copyright (C) 2008  Francesco Ficarola
  *  E-Mail: francesco.ficarola<at>gmail.com

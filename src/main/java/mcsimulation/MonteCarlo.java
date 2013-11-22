@@ -1,3 +1,5 @@
+package mcsimulation;
+
 /**
  *  Monte Carlo Simulations
  *  Copyright (C) 2008  Francesco Ficarola
