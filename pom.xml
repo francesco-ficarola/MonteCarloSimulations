@@ -32,32 +32,8 @@
                     <archive>
                         <manifestEntries>
                             <Main-Class>mcsimulations.MonteCarlo</Main-Class>
+                            <Class-Path>../lib/jsc.jar ../lib/ssj.jar</Class-Path>
                         </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-            <!--
-                Create JAR with dependencies included
-            -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <finalName>MonteCarlo</finalName>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>mcsimulations.MonteCarlo</mainClass>
-                        </manifest>
                     </archive>
                 </configuration>
             </plugin>
@@ -82,4 +58,38 @@
             <version>1.0</version>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>bundle</id>
+            <build>
+                <plugins>
+                    <!--
+                        Create JAR with dependencies included
+                    -->
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <finalName>MonteCarlo</finalName>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <archive>
+                                <manifest>
+                                    <mainClass>mcsimulations.MonteCarlo</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
