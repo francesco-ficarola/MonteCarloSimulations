@@ -17,9 +17,12 @@ package mcsimulations; /**
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+import mcsimulations.simulation.MCSimulation;
+
 import java.io.*;
+import java.util.*;
+import java.util.List;
 import java.util.regex.*;
-import java.util.ArrayList;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.awt.*;
@@ -142,8 +145,8 @@ public class MainPanel extends JPanel {
 
     //tableScroll: JScrollPane contenente il pannello tableSuperPanel
     private JScrollPane tableScroll;
-    
-    
+
+
     //*************************************************
     //*** Costruttore MainPanel() *********************
     //*************************************************  
@@ -409,6 +412,8 @@ public class MainPanel extends JPanel {
         tablePanel.add((JTextField)activitiesArray.get(0).get(2), limTable);
         
         distributionCombo = new JComboBox();
+
+        // ToDo (bit-man) replace using Distribution enum (check warnings!)
         distributionCombo.addItem("Uniform");
         distributionCombo.addItem("Triangular");
         distributionCombo.addItem("Beta");
@@ -618,6 +623,8 @@ public class MainPanel extends JPanel {
         tablePanel.add((JTextField)activitiesArray.get(activitiesNumber-1).get(2), limTable);
         
         distributionCombo = new JComboBox();
+
+        // ToDo (bit-man) replace using Distribution enum (check warnings!)
         distributionCombo.addItem("Uniform");
         distributionCombo.addItem("Triangular");
         distributionCombo.addItem("Beta");
@@ -789,17 +796,19 @@ public class MainPanel extends JPanel {
         if(itemDistribution.equals("Beta")) {
             
             parametersPanel = new JPanel(new GridLayout(1, 2));
-            parametersField = new JTextField[2];
-            parametersField[0] = new JTextField();
-            parametersField[0].setEditable(true);
-            parametersField[0].setHorizontalAlignment(JTextField.CENTER);
-            parametersField[0].setToolTipText("Parameter p");
-            parametersField[1] = new JTextField();
-            parametersField[1].setEditable(true);
-            parametersField[1].setHorizontalAlignment(JTextField.CENTER);
-            parametersField[1].setToolTipText("Parameter q");
-            parametersPanel.add(parametersField[0]);
-            parametersPanel.add(parametersField[1]);
+
+            // ToDo (bit-man) perform same code usage in remaining distributions
+            int numGUIParams = Distribution.BETA.getNumGUIParams();
+            parametersField = new JTextField[numGUIParams];
+            List<String> paramNamesGUI = Distribution.BETA.getParamNamesGUI();
+            for( int i = 0; i < numGUIParams; i++) {
+                parametersField[i] = new JTextField();
+                parametersField[i].setEditable(true);
+                parametersField[i].setHorizontalAlignment(JTextField.CENTER);
+                parametersField[i].setToolTipText(paramNamesGUI.get(i));
+                parametersPanel.add(parametersField[i]);
+            }
+
             activitiesArray.get(indexActivity).add(4, parametersPanel);
             limTable.fill = GridBagConstraints.HORIZONTAL;
             limTable.weightx = 0.16666;
@@ -1045,9 +1054,12 @@ public class MainPanel extends JPanel {
 
                 if(dataActArray.get(i).get(3).equals("Beta")) {
 
-                    int[] paramArray = new int[2];
-                    paramArray[0] = Integer.parseInt(((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(0))).getText());
-                    paramArray[1] = Integer.parseInt(((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(1))).getText());
+                    // ToDo (bit-man) replicate this change in remaining distributions
+                    int numParams = Distribution.BETA.getNumGUIParams();
+                    int[] paramArray = new int[numParams];
+                    for( int j = 0; j < numParams; j++ )
+                        paramArray[j] = Integer.parseInt(((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(j))).getText());
+
                     //Controllo delle condizioni sui parametri
                     if(paramArray[0] > 0 && paramArray[1] > 0)
                         dataActArray.get(i).add(paramArray);
@@ -1354,8 +1366,10 @@ public class MainPanel extends JPanel {
                     if(((String)openActArray.get(0).get(3)).equals("Beta")) {
 
                         ((JComboBox)activitiesArray.get(0).get(3)).setSelectedItem("Beta");
-                        ((JTextField)(((JPanel)activitiesArray.get(0).get(4)).getComponent(0))).setText(Integer.toString(((int[])openActArray.get(0).get(4))[0]));
-                        ((JTextField)(((JPanel)activitiesArray.get(0).get(4)).getComponent(1))).setText(Integer.toString(((int[])openActArray.get(0).get(4))[1]));
+
+                        // ToDo (bit-man) perform same replacement for remaining distributions
+                        for( int j = 0; j < Distribution.BETA.getNumGUIParams(); j++)
+                            ((JTextField)(((JPanel)activitiesArray.get(0).get(4)).getComponent(j))).setText(Integer.toString(((int[])openActArray.get(0).get(4))[j]));
 
                     } else
 
@@ -1406,8 +1420,10 @@ public class MainPanel extends JPanel {
                         if(((String)openActArray.get(i).get(3)).equals("Beta")) {
 
                             ((JComboBox)activitiesArray.get(i).get(3)).setSelectedItem("Beta");
-                            ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(0))).setText(Integer.toString(((int[])openActArray.get(i).get(4))[0]));
-                            ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(1))).setText(Integer.toString(((int[])openActArray.get(i).get(4))[1]));
+
+                            // ToDo (bit-man) perform same replacement for remaining distributions
+                            for( int j = 0; j < Distribution.BETA.getNumGUIParams(); j++)
+                                ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(j))).setText(Integer.toString(((int[])openActArray.get(i).get(4))[j]));
 
                         } else
 
@@ -1656,8 +1672,9 @@ public class MainPanel extends JPanel {
                                     } else
 
                                     if(((JComboBox)activitiesArray.get(i).get(3)).getSelectedItem().equals("Beta")) {
-                                        ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(0))).setEnabled(true);
-                                        ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(1))).setEnabled(true);
+                                        // ToDo (bit-man) perform same replacement for remaining distributions
+                                        for( int j = 0; j < Distribution.BETA.getNumGUIParams(); j++)
+                                            ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(i))).setEnabled(true);
                                     } else
 
                                     if(((JComboBox)activitiesArray.get(i).get(3)).getSelectedItem().equals("Gaussian")) {
@@ -1732,8 +1749,11 @@ public class MainPanel extends JPanel {
                                         } else
 
                                         if(dataActArray.get(i).get(3).equals("Beta")){
-                                            System.out.print(((int[])dataActArray.get(i).get(4))[0]+" ");
-                                            System.out.println(((int[])dataActArray.get(i).get(4))[1]);
+                                            // ToDo (bit-man) perform same replacement for remaining distributions
+                                            for( int j=0; j < Distribution.BETA.getNumGUIParams(); j++)
+                                                System.out.print(((int[])dataActArray.get(i).get(4))[j]+" ");
+
+                                            System.out.println();
                                         } else
 
                                         if(dataActArray.get(i).get(3).equals("Gaussian")){
@@ -1781,11 +1801,22 @@ public class MainPanel extends JPanel {
                                         System.out.println();
                                         System.out.println();
                                     }
-                                    
-                                    results = mcs.simulations();
-                                    
-                                    stopSimulations = System.currentTimeMillis();
-                                    
+
+                                    boolean errorOnSimulation = false;
+                                    String errorMessage = "";
+                                    try {
+                                        results = mcs.simulations();
+                                    } catch(RuntimeException e1) {
+                                        errorOnSimulation = true;
+                                        errorMessage = e1.getMessage();
+                                    }
+                                    catch (Exception e1) {
+                                        errorOnSimulation = true;
+                                        errorMessage = e1.getMessage();
+                                    } finally {
+                                        stopSimulations = System.currentTimeMillis();
+                                    }
+
                                     if(results.size() > 1) {
                                         DecimalFormatSymbols symb = new DecimalFormatSymbols();
                                         symb.setDecimalSeparator('.');
@@ -1799,6 +1830,11 @@ public class MainPanel extends JPanel {
                                             ((JTextField)activitiesArray.get(i).get(5)).setText(""+((int[])results.get(2))[i]);
                                         }
                                     }
+
+                                    if (errorOnSimulation)
+                                        JOptionPane.showMessageDialog(null,
+                                                "<html><body>"+errorMessage+"</body></html>", "Error",
+                                                JOptionPane.ERROR_MESSAGE);
 
                                 } else {
 
@@ -1857,8 +1893,10 @@ public class MainPanel extends JPanel {
                 } else
                 
                 if(((JComboBox)activitiesArray.get(i).get(3)).getSelectedItem().equals("Beta")) {
-                    ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(0))).setEnabled(false);
-                    ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(1))).setEnabled(false);
+
+                    // ToDo (bit-man) perform same replacement for remaining distributions
+                    for( int j = 0; j < Distribution.BETA.getNumGUIParams(); j++)
+                        ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(i))).setEnabled(false);
                 } else
                 
                 if(((JComboBox)activitiesArray.get(i).get(3)).getSelectedItem().equals("Gaussian")) {

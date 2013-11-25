@@ -1,4 +1,4 @@
-package mcsimulations; /**
+package mcsimulations.simulation; /**
  *  Monte Carlo Simulations
  *  Copyright (C) 2008  Francesco Ficarola
  *  E-Mail: francesco.ficarola<at>gmail.com
@@ -265,7 +265,7 @@ public class MCSimulation {
     }
     
     
-    public void computeDurations() {
+    public void computeDurations() throws Exception {
         
         durations = new double[n];
                 
@@ -293,13 +293,9 @@ public class MCSimulation {
             } else
             
             if(dataActArray.get(topologicalArray.get(i).get(0)-1).get(3) == "Beta") {
-                
-                Beta beta = new Beta(((int[])dataActArray.get(topologicalArray.get(i).get(0)-1).get(4))[0],
-                                    ((int[])dataActArray.get(topologicalArray.get(i).get(0)-1).get(4))[1]);
-                durations[i] = beta.random();
-                if(durations[i]<0)
-                    durations[i] = 0;
-                
+
+                durations[i] = calcBetaDuration(i);
+
             } else
             
             if(dataActArray.get(topologicalArray.get(i).get(0)-1).get(3) == "Gaussian") {
@@ -331,8 +327,23 @@ public class MCSimulation {
         
         
     }
-    
-    
+
+    private double calcBetaDuration(int i) throws ComputeException {
+
+        try {
+            BetaCalculator betaCalculator = new BetaCalculator(((int[]) dataActArray.get(topologicalArray.get(i).get(0) - 1).get(4))[0],
+                    ((int[]) dataActArray.get(topologicalArray.get(i).get(0) - 1).get(4))[1],
+                    ((int[]) dataActArray.get(topologicalArray.get(i).get(0) - 1).get(4))[2]);
+
+            Beta beta = new Beta(betaCalculator.getAlpha(),
+                    betaCalculator.getBeta());
+            return betaCalculator.scaleValue(beta.random());
+        } catch (ComputeException e) {
+            throw new ComputeException(e.getMessage() + ", Activity : " + i , e);
+        }
+    }
+
+
     public void makeInDegree() {
         
         for(int i=0; i<n; i++) {
@@ -537,7 +548,7 @@ public class MCSimulation {
     }
     
     
-    public void computeMaxTotalDuration() {
+    public void computeMaxTotalDuration() throws Exception {
         
         for(int i=0; i<repetitions; i++) {
 
@@ -563,7 +574,7 @@ public class MCSimulation {
     }
     
     
-    public ArrayList<Object> simulations() {
+    public ArrayList<Object> simulations() throws Exception {
         
         boolean exception = false;
         ArrayList<Object> results = new ArrayList<Object>();
