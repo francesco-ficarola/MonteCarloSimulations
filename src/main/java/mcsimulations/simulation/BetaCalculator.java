@@ -5,7 +5,7 @@ package mcsimulations.simulation;
  * Date: 11/25/13
  * Time: 12:13 PM
  */
-class BetaCalculator {
+public class BetaCalculator {
 
     private static final int LAMBDA = 4;
     private final int optimistic;
