@@ -865,54 +865,7 @@ public class MainPanel extends JPanel {
         }
         
     }
-    
-    
-    //*************************************************
-    //*** METODO updatePrecedencesField() *************
-    //*************************************************
-    public void updatePrecedencesField(int[] precArray, int currentActivity) {
-        
-        if(precArray[0] != -1) {
-            StringBuffer strBuff = new StringBuffer();
 
-            for(int i=0; i<precArray.length; i++) {
-                if(i != precArray.length-1) {
-                    strBuff.append(precArray[i]);
-                    strBuff.append("; ");
-                } else {
-                    strBuff.append(precArray[i]);
-                }
-            }
-
-            ((JTextField)activitiesArray.get(currentActivity).get(2)).setText(strBuff.toString());
-        } else
-            ((JTextField)activitiesArray.get(currentActivity).get(2)).setText("");
-        
-    }
-    
-    
-    //*************************************************
-    //*** METODO extractingNumbers() ******************
-    //*************************************************
-    public ArrayList<Integer> extractingNumbers(String s) {
-        
-        ArrayList<Integer> numbers = new ArrayList<Integer>();
-        Pattern p = Pattern.compile("\\d+");
-        Matcher m = p.matcher(s);
-        
-        while (m.find()) {
-            numbers.add(Integer.parseInt(m.group()));
-        }
-        
-        if(numbers.size() > 0) {
-            return numbers;
-        } else {
-            ArrayList<Integer> blankArray = new ArrayList<Integer>();
-            blankArray.add(-1);
-            return blankArray;
-        }
-        
-    }
     
     
     //*************************************************
@@ -972,7 +925,7 @@ public class MainPanel extends JPanel {
                 //---------------------------------------------------------
                 String precedencesString = ((JTextField)activitiesArray.get(i).get(2)).getText();
                 //Estrazione numeri dalla stringa del campo (JTextField) precedences
-                ArrayList<Integer> extractIntArray = extractingNumbers(precedencesString);
+                ArrayList<Integer> extractIntArray = Tools.extractingNumbers(precedencesString);
                 
                 //Controllo di numeri doppioni in extractIntArray e copia
                 //del risultato in precedencesIntArray
@@ -1010,9 +963,9 @@ public class MainPanel extends JPanel {
                     precErrors.add(i);
                     precOutOfBounds = 0;
                 }
-                
+
                 //Aggiornamento campi (JTextField) precedences
-                updatePrecedencesField(precedencesInt, i);
+                Tools.updatePrecedencesField(precedencesInt, i, activitiesArray);
                 
                 //------------------------------------------
                 //Inserimento elemento 2: precedences
@@ -1278,9 +1231,7 @@ public class MainPanel extends JPanel {
             if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                 try {
                     File selectedFile = chooser.getSelectedFile();
-                    ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(selectedFile+".mcp"));
-                    out.writeObject(saveActArray);
-                    out.close();
+                    Tools.saveProject(selectedFile, saveActArray);
                 }
                 catch(Exception e) {
                     JOptionPane.showMessageDialog(null,
@@ -1342,7 +1293,7 @@ public class MainPanel extends JPanel {
 
                     //Aggiornamento prima attività
                     ((JTextField)activitiesArray.get(0).get(1)).setText((String)openActArray.get(0).get(1));
-                    updatePrecedencesField((int[])openActArray.get(0).get(2), 0);
+                    Tools.updatePrecedencesField((int[]) openActArray.get(0).get(2), 0, activitiesArray);;
 
                     if(((String)openActArray.get(0).get(3)).equals("Uniform")) {
 
@@ -1396,7 +1347,7 @@ public class MainPanel extends JPanel {
                         addActivity();
 
                         ((JTextField)activitiesArray.get(i).get(1)).setText((String)openActArray.get(i).get(1));
-                        updatePrecedencesField((int[])openActArray.get(i).get(2), i);
+                        Tools.updatePrecedencesField((int[]) openActArray.get(i).get(2), i, activitiesArray);
 
                         if(((String)openActArray.get(i).get(3)).equals("Uniform")) {
 
@@ -1674,7 +1625,7 @@ public class MainPanel extends JPanel {
                                     if(((JComboBox)activitiesArray.get(i).get(3)).getSelectedItem().equals("Beta")) {
                                         // ToDo (bit-man) perform same replacement for remaining distributions
                                         for( int j = 0; j < Distribution.BETA.getNumGUIParams(); j++)
-                                            ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(i))).setEnabled(true);
+                                            ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(j))).setEnabled(true);
                                     } else
 
                                     if(((JComboBox)activitiesArray.get(i).get(3)).getSelectedItem().equals("Gaussian")) {
@@ -1827,7 +1778,8 @@ public class MainPanel extends JPanel {
                                         maxTotalDurField.setText(""+df.format(results.get(0)));
                                         sdField.setText(""+df.format(results.get(1)));
                                         for(int i=0; i<activitiesNumber; i++) {
-                                            ((JTextField)activitiesArray.get(i).get(5)).setText(""+((int[])results.get(2))[i]);
+                                            final int criticalPathNode = ((int[]) results.get(2))[i];
+                                            ((JTextField)activitiesArray.get(i).get(5)).setText(""+ criticalPathNode);
                                         }
                                     }
 
@@ -1896,7 +1848,7 @@ public class MainPanel extends JPanel {
 
                     // ToDo (bit-man) perform same replacement for remaining distributions
                     for( int j = 0; j < Distribution.BETA.getNumGUIParams(); j++)
-                        ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(i))).setEnabled(false);
+                        ((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(j))).setEnabled(false);
                 } else
                 
                 if(((JComboBox)activitiesArray.get(i).get(3)).getSelectedItem().equals("Gaussian")) {
