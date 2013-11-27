@@ -27,6 +27,7 @@ The next properties can be used to parametrize the test behaviour :
 
 BetaCalculatorTest
 ------------------
+
 * mcs.tests.bc.random-max : max. number of tests (default : 1000)
 * mcs.tests.bc.random-max-dist : max. number of probability function points generated (default : 100)
 
