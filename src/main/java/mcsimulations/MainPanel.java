@@ -146,11 +146,10 @@ public class MainPanel extends JPanel {
     //tableScroll: JScrollPane contenente il pannello tableSuperPanel
     private JScrollPane tableScroll;
 
-
     //*************************************************
     //*** Costruttore MainPanel() *********************
     //*************************************************  
-    public MainPanel(String s){
+    public MainPanel(String s, File f){
         
         //---------------------------------------------------------------------
         //Impostazione MainPanel
@@ -570,6 +569,8 @@ public class MainPanel extends JPanel {
         aboutButton.addActionListener(new MainListener());
         computeButton.addActionListener(new MainListener());
         
+        if ( f != null )
+            openProject(f);
     }
     
     
@@ -1292,14 +1293,14 @@ public class MainPanel extends JPanel {
 
     }
     
-    
     //*************************************************
     //*** METODO openProject() ************************
     //*************************************************
     @SuppressWarnings("unchecked")
     //Warning inevitabile nella chiamata in.readObject();
-    public void openProject() {
+    public void openProject(File f) {
         
+        boolean hasFile = (f != null);
         JFileChooser chooser = new JFileChooser();
         boolean exception_error = false;
         
@@ -1310,16 +1311,19 @@ public class MainPanel extends JPanel {
         chooser.addChoosableFileFilter(filter);
         **/
         
-        // Extension Filter for Java 5
-        String[] mcp = new String[] {"mcp"};
-        chooser.addChoosableFileFilter(new ExtFilter(mcp, "Monte Carlo Project (*.mcp)"));
         
-        if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+        if ( ! hasFile) {
+            // Extension Filter for Java 5
+            String[] mcp = new String[] {"mcp"};
+            chooser.addChoosableFileFilter(new ExtFilter(mcp, "Monte Carlo Project (*.mcp)"));
+        }
+        
+        if( hasFile || chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             
             ArrayList<ArrayList<Object>> openActArray = null;
             
             try {
-                File selectedFile = chooser.getSelectedFile();
+                File selectedFile = hasFile ? f : chooser.getSelectedFile();
                 ObjectInputStream in = new ObjectInputStream(new FileInputStream(selectedFile));
                 openActArray = (ArrayList<ArrayList<Object>>)in.readObject();
                 in.close();
@@ -1585,7 +1589,7 @@ public class MainPanel extends JPanel {
             
             if(e.getSource() == openButton) {
                 
-                openProject();
+                openProject(null);
                 
                 //Refresh MainPanel
                 revalidate();

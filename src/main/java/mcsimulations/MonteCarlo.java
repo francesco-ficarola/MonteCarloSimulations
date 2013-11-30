@@ -1,5 +1,7 @@
 package mcsimulations;
 
+import  java.io.File;
+
 /**
  *  Monte Carlo Simulations
  *  Copyright (C) 2008  Francesco Ficarola
@@ -24,32 +26,36 @@ public class MonteCarlo {
 
     public static void main(String[] args) {
         
-        if(args.length == 1) {
-            if(args[0].equals("-v") || args[0].equals("--verbose")) {
-                MainFrame window = new MainFrame(args[0]);
-                window.setLocationRelativeTo(null);
-            } else {
-                System.out.println();
-                System.out.println("ERROR: Invalid Parameter!");
-                System.out.println();
-                System.out.println("TARGET SPECIFICATION:");
-                System.out.println("-v or --verbose: Getting verbose output");
-                System.out.println();
-            }
-        } else {
-            if(args.length > 1) {
-                System.out.println();
-                System.out.println("ERROR: Invalid Parameter!");
-                System.out.println();
-                System.out.println("TARGET SPECIFICATION:");
-                System.out.println("-v or --verbose: Getting verbose output");
-                System.out.println();
-            } else {
-                MainFrame window = new MainFrame("");
-                window.setLocationRelativeTo(null);
-            }
-        }
+        String verbose = "";
+        File f = null;
+        
+        for ( String arg : args ) {
+            if( arg.equals("-v") || arg.equals("--verbose") )
+                verbose= arg;
+            else if( arg.equals("-h") || arg.equals("--help") ) {
+                showHelp();
+                System.exit(-1);
+            } else if (arg.startsWith("-")){
+                showHelp();
+                System.exit(-1);
+            } else
+                f = new File(arg);
+        };
+        
+        MainFrame window = new MainFrame(verbose, f);
+        window.setLocationRelativeTo(null);
         
     }
 
+    private static void showHelp() {
+        
+        System.out.println("");
+        System.out.println("usage:");
+        System.out.println("    MonteCarlo.sh [-h] [-v] {file]");
+        System.out.println("");
+        System.out.println("-v or --verbose : Getting verbose output");
+        System.out.println("   -h or --help : this help");
+        System.out.println("           file : file path to open");
+        System.out.println("");
+    }
 }
