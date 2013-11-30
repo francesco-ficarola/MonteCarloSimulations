@@ -26,6 +26,8 @@ import umontreal.iro.lecuyer.rng.LFSR113;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
+import java.io.File;
+
 public class MCSimulation {
     
     //Stringa per la modalità verbose
@@ -236,32 +238,49 @@ public class MCSimulation {
         
         double totMean = 0;
         double totVar = 0;
-        double mean = 0;
-        double sd = 0;
         double variance = 0;
         
-        for(int i=0; i<repetitions; i++)
+        SimulationResults result = new SimulationResults();
+        
+        if (isVerbose() ) {
+              System.out.println("Histogram");
+              System.out.println("---------");
+        }
+          
+        for(int i=0; i<repetitions; i++) {
+            result.addDuration(totalDurs[i]);
             totMean = totMean + totalDurs[i];
+            if( isVerbose() )
+                System.out.println(totalDurs[i]);     
+        }
         
-        mean = totMean/repetitions;
+        result.setMean( totMean /  result.getNumDurations() );
         
-        for(int i=0; i<repetitions; i++)
-            totVar = totVar + Math.pow(totalDurs[i]-mean, 2);
+        for( Double d : result.getDurations() ) {
+            System.out.println("d : " + d );
+            System.out.println("mean : " + result.getMean() );
+            totVar = totVar + Math.pow(d - result.getMean() , 2);
+        }
         
-        variance = totVar/repetitions;
+        variance = totVar / result.getNumDurations();
         
-        sd = Math.pow(variance, (double)1/2);
+        result.setSD( Math.pow(variance, (double)1/2) );
         
         // OUTPUT MEDIA/VARIANZA/DEVIAZIONE STANDARD
-        if(verbose.equals("-v") || verbose.equals("--verbose")) {
-            System.out.println("Media: "+mean);
-            System.out.println("Varianza: "+variance);
-            System.out.println("Deviazione standard: "+sd);
+        if( isVerbose() ) {
+            System.out.println("Media: " + result.getMean());
+            System.out.println("Varianza: " + variance);
+            System.out.println("Deviazione standard: " + result.getSD());
+            System.out.println("---------------------------------");
         }
         
         
-        return sd;
+        return result.getSD();
         
+    }
+    
+    public boolean isVerbose() {
+        return verbose.equals("-v") || verbose.equals("--verbose");
     }
     
     
@@ -323,7 +342,7 @@ public class MCSimulation {
         }
         
         // OUTPUT ARRAY durations
-        if(verbose.equals("-v") || verbose.equals("--verbose")) {
+        if(isVerbose()) {
             for(int i=0; i<n; i++)
                 System.out.println("Durata nodo "+topologicalArray.get(i).get(0)+": "+durations[i]);
             System.out.println();
@@ -420,7 +439,7 @@ public class MCSimulation {
                 for(int j=0; j<inDegree[i]; j++){
                     
                     // OUTPUT DURATE FINALI RELATIVE ALLE POSIZIONI RESTITUITE DA inNodes
-                    if(verbose.equals("-v") || verbose.equals("--verbose")) {
+                    if(isVerbose()) {
                         System.out.println("ending[inNodes"+"["+i+"]"+"["+j+"]"+"]: "+ending[inNodes[i][j]-1]);
                     }
                     
@@ -453,7 +472,7 @@ public class MCSimulation {
                 }
                 
                 // OUTPUT VARIABILE Max
-                if(verbose.equals("-v") || verbose.equals("--verbose")) {
+                if(isVerbose()) {
                     System.out.println("Max: "+max);
                 }
                 
@@ -481,7 +500,7 @@ public class MCSimulation {
             }
             
             // OUTPUT ARRAY ending
-            if(verbose.equals("-v") || verbose.equals("--verbose")) {
+            if(isVerbose()) {
                 System.out.println("Durata per arrivare al nodo "+topologicalArray.get(i).get(0)+": "+ending[topologicalArray.get(i).get(0)-1]);
                 System.out.println();
             }
@@ -544,7 +563,7 @@ public class MCSimulation {
             totalDurations[i] = computePERT_CPN();
 
             // OUTPUT ARRAY totalDurations
-            if(verbose.equals("-v") || verbose.equals("--verbose")) {
+            if(isVerbose()) {
                 System.out.println("Total duration: "+totalDurations[i]);
                 System.out.println();
             }
@@ -555,7 +574,7 @@ public class MCSimulation {
         }
 
         // OUTPUT VARIABILE maxTotalEnding
-        if(verbose.equals("-v") || verbose.equals("--verbose")) {
+        if(isVerbose()) {
             System.out.println("Tempo massimo di progetto: "+maxTotalEnding);
         }
             
