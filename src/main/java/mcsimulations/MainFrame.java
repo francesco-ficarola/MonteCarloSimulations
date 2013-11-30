@@ -19,17 +19,18 @@ package mcsimulations; /**
 
 import java.awt.*;
 import javax.swing.*;
+import java.io.File;
 
 public class MainFrame extends JFrame {
     
-    public MainFrame(String s){
+    public MainFrame(String verbose, File f){
         
         setSize(new Dimension(840,580));
 	setTitle("Monte Carlo Simulations");
 	setResizable(true);
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
-	MainPanel panel = new MainPanel(s);
+	MainPanel panel = new MainPanel(verbose, f);
         JScrollPane scroll = new JScrollPane(panel);
         scroll.setPreferredSize(new Dimension(820,560));
 	

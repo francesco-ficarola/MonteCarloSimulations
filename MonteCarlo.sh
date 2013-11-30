@@ -3,4 +3,4 @@
 __pwd=`dirname $0`
 
 cd ${__pwd}
-java -jar target/MonteCarlo.jar
+java -jar target/MonteCarlo.jar $@
