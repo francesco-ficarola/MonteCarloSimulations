@@ -27,9 +27,13 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 public class MCSimulation {
-    
+
+    private static final int INTERVALS = 30;
+    private static final String COMMA = ",";
     //Stringa per la modalità verbose
     private String verbose;
     
@@ -243,24 +247,30 @@ public class MCSimulation {
         SimulationResults result = new SimulationResults();
         
         if (isVerbose() ) {
-              System.out.println("Histogram");
+              System.out.println("\nHistogram");
               System.out.println("---------");
         }
-          
+
+        List<Double> duration = new ArrayList<Double>();
         for(int i=0; i<repetitions; i++) {
             result.addDuration(totalDurs[i]);
             totMean = totMean + totalDurs[i];
-            if( isVerbose() )
-                System.out.println(totalDurs[i]);     
+            duration.add(totalDurs[i]);
         }
+
+        if (isVerbose()) {
+            final Histogram histogram = new Histogram(duration, INTERVALS);
+            System.out.println("Interval,Start,End,Height");
+            for (int i = 0; i < histogram.getNumIntervals(); i++) {
+                final Interval interval = histogram.getInterval(i);
+                System.out.println(i + COMMA + interval.getStart()+ COMMA + interval.getEnd() + COMMA + interval.getHeight());
+            }
+        }
+
+        result.setMean(totMean / result.getNumDurations());
         
-        result.setMean( totMean /  result.getNumDurations() );
-        
-        for( Double d : result.getDurations() ) {
-            System.out.println("d : " + d );
-            System.out.println("mean : " + result.getMean() );
+        for( Double d : result.getDurations() )
             totVar = totVar + Math.pow(d - result.getMean() , 2);
-        }
         
         variance = totVar / result.getNumDurations();
         
@@ -613,7 +623,7 @@ public class MCSimulation {
                 JOptionPane.ERROR_MESSAGE);
         }
         
-        if(exception == false) {
+        if(!exception) {
             
             computeMaxTotalDuration();
             double sd = computeSD(totalDurations);

@@ -36,7 +36,7 @@ public class MonteCarlo {
                 showHelp();
                 System.exit(-1);
             } else if (arg.startsWith("-")){
-                showHelp();
+                showHelp("Unknown option " + arg);
                 System.exit(-1);
             } else
                 f = new File(arg);
@@ -47,8 +47,13 @@ public class MonteCarlo {
         
     }
 
+    private static void showHelp(String msg) {
+        System.out.println("\n" + msg);
+        showHelp();
+    }
+
     private static void showHelp() {
-        
+
         System.out.println("");
         System.out.println("usage:");
         System.out.println("    MonteCarlo.sh [-h] [-v] {file]");
@@ -58,4 +63,5 @@ public class MonteCarlo {
         System.out.println("           file : file path to open");
         System.out.println("");
     }
+
 }

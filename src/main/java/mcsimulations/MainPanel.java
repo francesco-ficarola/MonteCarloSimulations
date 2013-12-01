@@ -479,7 +479,7 @@ public class MainPanel extends JPanel {
         maxTotalDurLabel = new JLabel("Max Total Duration (days): ", JLabel.RIGHT);
         sdLabel = new JLabel("Standard Deviation (days): ", JLabel.RIGHT);
         timeSpentLabel = new JLabel("Time Spent (sec): ", JLabel.RIGHT);
-        pleaseWaitLabel = new JLabel("...Please Waiting...", JLabel.CENTER);
+        pleaseWaitLabel = new JLabel("...Please Wait...", JLabel.CENTER);
         pleaseWaitLabel.setForeground(new Color(255,0,0));
         pleaseWaitLabel.setVisible(false);
         maxTotalDurField = new JTextField(10);
