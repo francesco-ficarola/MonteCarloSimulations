@@ -35,6 +35,11 @@ class SimulationResults {
 	public void setSD( Double sd ) {
 	    this.sd = sd;
 	}
+
+    public Histogram getHistogram(int intervals) {
+        return new Histogram(getDurations(), intervals);
+    }
+
 	
 	
 }

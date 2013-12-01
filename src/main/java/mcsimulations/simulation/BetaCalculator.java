@@ -32,10 +32,10 @@ public class BetaCalculator {
         this.mostLikely = mostLikely;
 
         if ( optimistic > mostLikely)
-            throw new ComputeException("Optimistic time MUST BE lower or equal than Most Likely time");
+            throw new ComputeException("Optimistic time ("+ optimistic +") MUST BE lower or equal than Most Likely time (" + mostLikely + ")");
 
         if ( pessimistic < mostLikely)
-            throw new ComputeException("Pessimistic time MUST BE greater or equal than Most Likely time");
+            throw new ComputeException("Pessimistic time (" + pessimistic + ") MUST BE greater or equal than Most Likely time (" + mostLikely + ")");
 
     }
 
