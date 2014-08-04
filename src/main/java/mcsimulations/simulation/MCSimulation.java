@@ -35,7 +35,7 @@ public class MCSimulation {
     private static final int INTERVALS = 30;
     private static final String COMMA = ",";
     //Stringa per la modalità verbose
-    private String verbose;
+    private boolean verbose;
     
     //Numero ripetizioni per la simulazione
     private int repetitions;
@@ -89,7 +89,7 @@ public class MCSimulation {
     private double[] totalDurations;
     
     
-    public MCSimulation(String s, int repet, ArrayList<ArrayList<Object>> actArray) {
+    public MCSimulation(boolean s, int repet, ArrayList<ArrayList<Object>> actArray) {
         
     	// ToDo make verbose boolean
         verbose = s;
@@ -244,7 +244,7 @@ public class MCSimulation {
         result.setMaxDuration( computeMaxTotalDuration(totalDurs) );
         result.setCPN(cpnResult);
         
-        if (isVerbose() ) {
+        if ( verbose  ) {
               System.out.println("\nHistogram");
               System.out.println("---------");
         }
@@ -256,7 +256,7 @@ public class MCSimulation {
             duration.add(totalDurs[i]);
         }
 
-        if (isVerbose()) {
+        if ( verbose ) {
             final Histogram histogram = new Histogram(duration, INTERVALS);
             System.out.println("Interval,Start,End,Height");
             for (int i = 0; i < histogram.getNumIntervals(); i++) {
@@ -275,7 +275,7 @@ public class MCSimulation {
         result.setSD( Math.pow(variance, (double)1/2) );
         
         // OUTPUT MEDIA/VARIANZA/DEVIAZIONE STANDARD
-        if( isVerbose() ) {
+        if(  verbose  ) {
             System.out.println("Media: " + result.getMean());
             System.out.println("Varianza: " + variance);
             System.out.println("Deviazione standard: " + result.getSD());
@@ -286,11 +286,6 @@ public class MCSimulation {
         return result;
         
     }
-    
-    private boolean isVerbose() {
-        return verbose.equals("-v") || verbose.equals("--verbose");
-    }
-    
     
     private void computeDurations() throws Exception {
         
@@ -346,7 +341,7 @@ public class MCSimulation {
         }
         
         // OUTPUT ARRAY durations
-        if(isVerbose()) {
+        if( verbose ) {
             for(int i=0; i<n; i++)
                 System.out.println("Durata nodo "+topologicalArray.get(i).get(0)+": "+durations[i]);
             System.out.println();
@@ -459,7 +454,7 @@ public class MCSimulation {
                 for(int j=0; j<inDegree[i]; j++){
                     
                     // OUTPUT DURATE FINALI RELATIVE ALLE POSIZIONI RESTITUITE DA inNodes
-                    if(isVerbose()) {
+                    if( verbose ) {
                         System.out.println("ending[inNodes"+"["+i+"]"+"["+j+"]"+"]: "+ending[inNodes[i][j]-1]);
                     }
                     
@@ -492,7 +487,7 @@ public class MCSimulation {
                 }
                 
                 // OUTPUT VARIABILE Max
-                if(isVerbose()) {
+                if( verbose ) {
                     System.out.println("Max: "+max);
                 }
                 
@@ -520,7 +515,7 @@ public class MCSimulation {
             }
             
             // OUTPUT ARRAY ending
-            if(isVerbose()) {
+            if( verbose ) {
                 System.out.println("Durata per arrivare al nodo "+topologicalArray.get(i).get(0)+": "+ending[topologicalArray.get(i).get(0)-1]);
                 System.out.println();
             }
@@ -586,7 +581,7 @@ public class MCSimulation {
             totalDurs[i] = computePERT_CPN();
 
             // OUTPUT ARRAY totalDurs
-            if(isVerbose()) {
+            if( verbose ) {
                 System.out.println("Total duration: "+totalDurs[i]);
                 System.out.println();
             }
@@ -597,7 +592,7 @@ public class MCSimulation {
         }
 
         // OUTPUT VARIABILE maxTotalEnding
-        if(isVerbose()) {
+        if( verbose ) {
             System.out.println("Tempo massimo di progetto: "+maxTotalEnding);
         }
         
