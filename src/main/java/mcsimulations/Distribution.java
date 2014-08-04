@@ -12,22 +12,24 @@ import java.util.List;
 public enum Distribution {
 
     //ToDo (bit-man) change parameter names accordingly
-    UNIFORM(2, new String[]{"parameter noname", "parameter noname"}),
-    TRIANGULAR(3, new String[]{"parameter noname", "parameter noname", "parameter noname"}),
+    UNIFORM(2, new String[]{"parameter noname", "parameter noname"}, "Uniform"),
+    TRIANGULAR(3, new String[]{"parameter noname", "parameter noname", "parameter noname"}, "Triangular"),
     BETA(3,
-        new String[] {"parameter Optimistic Time", "parameter Pessimistic Time", "parameter Most Likely Time" }),
-    GAUSSIAN(2, new String[]{"parameter noname", "parameter noname"}),
-    EXPONENTIAL(1, new String[]{"parameter noname"});
+        new String[] {"parameter Optimistic Time", "parameter Pessimistic Time", "parameter Most Likely Time" }, "Beta"),
+    GAUSSIAN(2, new String[]{"parameter noname", "parameter noname"}, "Gaussian"),
+    EXPONENTIAL(1, new String[]{"parameter noname"}, "Exponential");
 
     private final int numGUIParams;
-
     private final List<String> paramNamesGUI;
+    private final String name;
 
-    Distribution(int numGUIParams, String[] paramNamesGUI) {
+    Distribution(int numGUIParams, String[] paramNamesGUI, String name) {
         this.numGUIParams = numGUIParams;
 
         this.paramNamesGUI = new ArrayList<String>(numGUIParams);
         Collections.addAll(this.paramNamesGUI,paramNamesGUI);
+        
+        this.name = name;
     }
 
     public int getNumGUIParams() {
@@ -36,5 +38,9 @@ public enum Distribution {
 
     public List<String> getParamNamesGUI() {
         return paramNamesGUI;
+    }
+    
+    public String getName() {
+    	return this.name;
     }
 }

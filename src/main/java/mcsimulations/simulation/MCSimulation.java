@@ -40,9 +40,6 @@ public class MCSimulation {
     //Numero ripetizioni per la simulazione
     private int repetitions;
     
-    //Tempo totale massimo di fine progetto tra tutte le ripetizioni
-    private double maxTotalEnding;
-    
     //ArrayList delle attività
     private ArrayList<ArrayList<Object>> dataActArray;
     
@@ -94,13 +91,11 @@ public class MCSimulation {
     
     public MCSimulation(String s, int repet, ArrayList<ArrayList<Object>> actArray) {
         
+    	// ToDo make verbose boolean
         verbose = s;
         repetitions = repet;
         dataActArray = actArray;
-        
-        //Inizializzazione maxTotalEnding
-        maxTotalEnding = 0;
-        
+
         //Inizializzazione numero nodi
         n = dataActArray.size();
         
@@ -238,13 +233,16 @@ public class MCSimulation {
     }
     
     
-    public double computeSD(double[] totalDurs) {
+    private SimulationResults computeResults(double[] totalDurs) throws Exception {
         
         double totMean = 0;
         double totVar = 0;
         double variance = 0;
         
         SimulationResults result = new SimulationResults();
+        
+        result.setMaxDuration( computeMaxTotalDuration(totalDurs) );
+        result.setCPN(cpnResult);
         
         if (isVerbose() ) {
               System.out.println("\nHistogram");
@@ -285,16 +283,16 @@ public class MCSimulation {
         }
         
         
-        return result.getSD();
+        return result;
         
     }
     
-    public boolean isVerbose() {
+    private boolean isVerbose() {
         return verbose.equals("-v") || verbose.equals("--verbose");
     }
     
     
-    public void computeDurations() throws Exception {
+    private void computeDurations() throws Exception {
         
         durations = new double[n];
                 
@@ -373,7 +371,7 @@ public class MCSimulation {
     }
 
 
-    public void makeInDegree() {
+    private void makeInDegree() {
         
         for(int i=0; i<n; i++) {
             if(inNodesArray.get(i).get(0) != 0) {
@@ -385,7 +383,7 @@ public class MCSimulation {
     }
     
     
-    public void makeOutDegree() {
+    private void makeOutDegree() {
         
         for(int i=0; i<n; i++) {
             outDegree[i] = topologicalArray.get(i).size()-1;
@@ -577,21 +575,24 @@ public class MCSimulation {
     }
     
     
-    public void computeMaxTotalDuration() throws Exception {
+    private double computeMaxTotalDuration(double[] totalDurs) throws Exception {
         
+		//Tempo totale massimo di fine progetto tra tutte le ripetizioni
+		double maxTotalEnding = 0;
+		
         for(int i=0; i<repetitions; i++) {
 
             computeDurations();
-            totalDurations[i] = computePERT_CPN();
+            totalDurs[i] = computePERT_CPN();
 
-            // OUTPUT ARRAY totalDurations
+            // OUTPUT ARRAY totalDurs
             if(isVerbose()) {
-                System.out.println("Total duration: "+totalDurations[i]);
+                System.out.println("Total duration: "+totalDurs[i]);
                 System.out.println();
             }
 
-            if(totalDurations[i] > maxTotalEnding)
-                maxTotalEnding = totalDurations[i];
+            if(totalDurs[i] > maxTotalEnding)
+                maxTotalEnding = totalDurs[i];
 
         }
 
@@ -599,20 +600,20 @@ public class MCSimulation {
         if(isVerbose()) {
             System.out.println("Tempo massimo di progetto: "+maxTotalEnding);
         }
-            
+        
+        return maxTotalEnding;
     }
     
-    
-    public ArrayList<Object> simulations() throws Exception {
-        
-        boolean exception = false;
-        ArrayList<Object> results = new ArrayList<Object>();
+    /**
+     * Calculates simulation results.
+     * Returns null on error
+     **/
+    public SimulationResults results() throws Exception {
                 
         try {
             totalDurations = new double[repetitions];
         }
         catch(OutOfMemoryError e) {
-            exception = true;
             JOptionPane.showMessageDialog(null,
                 "<html><body>For repetitions more than 7 million and<br>" +
                 "less than 100 million please restart the<br>" +
@@ -621,20 +622,11 @@ public class MCSimulation {
                 "10~60 million: -Xmx512m (RAM 512MB+)<br>" +
                 "60~100 million: -Xmx1024m (RAM 1024MB+)</body></html>", "Error", 
                 JOptionPane.ERROR_MESSAGE);
-        }
-        
-        if(!exception) {
-            
-            computeMaxTotalDuration();
-            double sd = computeSD(totalDurations);
-            results.add(maxTotalEnding);
-            results.add(sd);
-            results.add(cpnResult);
 
-        } else results.add(-1);
-        
-        return results;
-        
+        	return null;
+        }
+          
+		return computeResults(totalDurations);        
     }
     
     // METODI DI STAMPA PER LA VERIFICA DELL'ESATEZZA DEI RISULTATI

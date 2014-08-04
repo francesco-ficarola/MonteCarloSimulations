@@ -18,6 +18,7 @@ package mcsimulations; /**
 **/
 
 import mcsimulations.simulation.MCSimulation;
+import mcsimulations.simulation.SimulationResults;
 
 import java.io.*;
 import java.util.*;
@@ -42,8 +43,8 @@ public class MainPanel extends JPanel {
     private long startSimulations;
     //stopSimulations: calcola il tempo di fine delle simulazioni
     private long stopSimulations;
-    //results: ArrayList nel quale sono memorizzati i risultati di calcolo
-    private ArrayList<Object> results;
+    //results: risultati di calcolo
+    private SimulationResults results;
     //verbose: Stringa per la modalità verbose
     private String verbose;
     
@@ -108,6 +109,7 @@ public class MainPanel extends JPanel {
     private JLabel cpnLabel;
     private JLabel maxTotalDurLabel;
     private JLabel sdLabel;
+    private JLabel meanLabel;
     private JLabel timeSpentLabel;
     private JLabel pleaseWaitLabel;
     
@@ -129,6 +131,8 @@ public class MainPanel extends JPanel {
     private JTextField numActField;
     //maxTotalDurField: risultato del Monte Carlo Simulation
     private JTextField maxTotalDurField;
+    //meanField: result mean
+    private JTextField meanField;
     //sdField: deviazione standard dei risultati ottenuti
     private JTextField sdField;
     //timeSpentField: tempo trascorso per il calcolo
@@ -207,7 +211,7 @@ public class MainPanel extends JPanel {
         activityButtPanel.setLayout(new FlowLayout());
         
         resultsPanel = new JPanel();
-        resultsPanel.setLayout(new GridLayout(3, 2));
+        resultsPanel.setLayout(new GridLayout(4, 2));
         resultsPanel.setBackground(new Color(80, 172, 236));
         
         
@@ -478,6 +482,7 @@ public class MainPanel extends JPanel {
         //---------------------------------------------------------------------
         maxTotalDurLabel = new JLabel("Max Total Duration (days): ", JLabel.RIGHT);
         sdLabel = new JLabel("Standard Deviation (days): ", JLabel.RIGHT);
+        meanLabel = new JLabel("Mean (days): ",  JLabel.RIGHT);
         timeSpentLabel = new JLabel("Time Spent (sec): ", JLabel.RIGHT);
         pleaseWaitLabel = new JLabel("...Please Wait...", JLabel.CENTER);
         pleaseWaitLabel.setForeground(new Color(255,0,0));
@@ -486,6 +491,8 @@ public class MainPanel extends JPanel {
         maxTotalDurField.setEditable(false);
         sdField = new JTextField(10);
         sdField.setEditable(false);
+        meanField = new JTextField(10);
+        meanField.setEditable(false);
         timeSpentField = new JTextField(""+0.0, 10);
         timeSpentField.setEditable(false);
                         
@@ -516,6 +523,8 @@ public class MainPanel extends JPanel {
         resultsPanel.add(maxTotalDurField);
         resultsPanel.add(sdLabel);
         resultsPanel.add(sdField);
+        resultsPanel.add(meanLabel);
+        resultsPanel.add(meanField);
         resultsPanel.add(timeSpentLabel);
         resultsPanel.add(timeSpentField);        
         
@@ -725,6 +734,7 @@ public class MainPanel extends JPanel {
         
         maxTotalDurField.setText("");
         sdField.setText("");
+        meanField.setText("");
         timeSpentField.setText(""+0.0);
     }
     
@@ -1599,6 +1609,7 @@ public class MainPanel extends JPanel {
                                 numActField.setEnabled(true);
                                 maxTotalDurField.setEnabled(true);
                                 sdField.setEnabled(true);
+                                meanField.setEnabled(true);
                                 timeSpentField.setEnabled(true);
                                 addActivityButton.setEnabled(true);
                                 remActivityButton.setEnabled(true);
@@ -1723,7 +1734,6 @@ public class MainPanel extends JPanel {
                                     System.out.println();
                                 }
 
-                                results = new ArrayList<Object>();
                                 startSimulations = System.currentTimeMillis();
 
                                 MCSimulation mcs = new MCSimulation(verbose, numRepetitions, dataActArray);
@@ -1760,7 +1770,7 @@ public class MainPanel extends JPanel {
                                     boolean errorOnSimulation = false;
                                     String errorMessage = "";
                                     try {
-                                        results = mcs.simulations();
+                                        results = mcs.results();
                                     } catch(RuntimeException e1) {
                                         e1.printStackTrace();
                                         errorOnSimulation = true;
@@ -1774,17 +1784,18 @@ public class MainPanel extends JPanel {
                                         stopSimulations = System.currentTimeMillis();
                                     }
 
-                                    if(results.size() > 1) {
+                                    if ( results != null ) {
                                         DecimalFormatSymbols symb = new DecimalFormatSymbols();
                                         symb.setDecimalSeparator('.');
                                         DecimalFormat df = new DecimalFormat("0.###");
                                         df.setDecimalFormatSymbols(symb);
 
-                                        timeSpentField.setText(""+((double)(stopSimulations-startSimulations)/1000));
-                                        maxTotalDurField.setText(""+df.format(results.get(0)));
-                                        sdField.setText(""+df.format(results.get(1)));
+                                        timeSpentField.setText( "" + ((double)(stopSimulations-startSimulations)/1000) );
+                                        maxTotalDurField.setText( "" + df.format(results.getMaxDuration()) );
+                                        sdField.setText( "" + df.format(results.getSD()) );
+                                        meanField.setText( "" + df.format(results.getMean()) );
                                         for(int i=0; i<activitiesNumber; i++) {
-                                            final int criticalPathNode = ((int[]) results.get(2))[i];
+                                            final int criticalPathNode = ((int[]) results.getCPN())[i];
                                             ((JTextField)activitiesArray.get(i).get(5)).setText(""+ criticalPathNode);
                                         }
                                     }
