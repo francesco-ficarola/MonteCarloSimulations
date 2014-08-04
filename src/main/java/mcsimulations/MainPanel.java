@@ -46,7 +46,7 @@ public class MainPanel extends JPanel {
     //results: risultati di calcolo
     private SimulationResults results;
     //verbose: Stringa per la modalità verbose
-    private String verbose;
+    private boolean verbose;
     
     //limTable: per il GridBagLayout del tablePanel
     private GridBagConstraints limTable;
@@ -155,7 +155,7 @@ public class MainPanel extends JPanel {
     //*************************************************
     //*** Costruttore MainPanel() *********************
     //*************************************************  
-    public MainPanel(String s, File f){
+    public MainPanel(boolean s, File f){
         
         //---------------------------------------------------------------------
         //Impostazione MainPanel
@@ -1125,7 +1125,7 @@ public class MainPanel extends JPanel {
         } else {
             
             // OUTPUT ECCEZIONI ED ERRORI
-            if(verbose.equals("-v") || verbose.equals("--verbose")) {
+            if(verbose) {
                 System.out.println("Exceptions of Parameters: "+paramExceptions.size());
                 System.out.println("Error of Parameters: "+paramErrors.size());
                 System.out.println("Errors of Precedences: "+precErrors.size());
@@ -1700,7 +1700,7 @@ public class MainPanel extends JPanel {
                             if(dataActArray.get(0).size() > 1) {
 
                                 // OUTPUT dataActArray
-                                if(verbose.equals("-v") || verbose.equals("--verbose")) {
+                                if(verbose) {
                                     System.out.println();
                                     System.out.println("ACTIVITIES CHART:");
                                     for(int i=0; i<activitiesNumber; i++) {
@@ -1750,7 +1750,7 @@ public class MainPanel extends JPanel {
                                 if(acyclic == 1) {
 
                                     // OUTPUT ARRAY topologicalArray
-                                    if(verbose.equals("-v") || verbose.equals("--verbose")) {
+                                    if( verbose ) {
                                         System.out.println("Prima colonna: Array ordinato topologicamente.");
                                         System.out.println("Seconda colonna in poi: nodi successori (outNodes):");
                                         mcs.printSortArray();
@@ -1760,7 +1760,7 @@ public class MainPanel extends JPanel {
                                     mcs.makeInNodes();
                                     
                                     // OUTPUT ARRAY inDegree/outDegree e MATRICE inNodes
-                                    if(verbose.equals("-v") || verbose.equals("--verbose")) {
+                                    if( verbose ) {
                                         System.out.println();
                                         System.out.println("Matrice inNodes:");
                                         mcs.printInNodes();
@@ -1825,7 +1825,7 @@ public class MainPanel extends JPanel {
 
                             } // OUTPUT AVVISO ECCEZIONI
                             else {
-                                if(verbose.equals("-v") || verbose.equals("--verbose")) {
+                                if( verbose ) {
                                     System.out.println("Error: ci sono state delle eccezioni!");
                                 }
                             }

@@ -11,7 +11,7 @@ import mcsimulations.Distribution;
 
 public class MCSimulationTest {
 
-	private static String NON_VERBOSE = "";
+	private static boolean NON_VERBOSE = false;
 	private static int IS_ACYCLIC = 1;
 	private static int REPETITIONS_DEFAULT = 100;
 	
