@@ -149,6 +149,8 @@ public class MainPanel extends JPanel {
 
     //tableScroll: JScrollPane contenente il pannello tableSuperPanel
     private JScrollPane tableScroll;
+    
+    private File lastFolder = null;
 
     //*************************************************
     //*** Costruttore MainPanel() *********************
@@ -1285,9 +1287,11 @@ public class MainPanel extends JPanel {
             // Extension Filter for Java 5
             String[] mcp = new String[] {"mcp"};
             chooser.addChoosableFileFilter(new ExtFilter(mcp, "Monte Carlo Project (*.mcp)"));
+            chooser.setCurrentDirectory( lastFolder );
             
             if(chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                 try {
+                	lastFolder = chooser.getCurrentDirectory();
                     File selectedFile = chooser.getSelectedFile();
                     ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(selectedFile+".mcp"));
                     out.writeObject(saveActArray);
@@ -1328,8 +1332,12 @@ public class MainPanel extends JPanel {
             chooser.addChoosableFileFilter(new ExtFilter(mcp, "Monte Carlo Project (*.mcp)"));
         }
         
+        chooser.setCurrentDirectory( lastFolder );
+        
         if( hasFile || chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             
+        	lastFolder = chooser.getCurrentDirectory();
+        
             ArrayList<ArrayList<Object>> openActArray = null;
             
             try {

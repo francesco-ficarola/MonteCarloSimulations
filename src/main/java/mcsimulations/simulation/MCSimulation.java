@@ -233,7 +233,7 @@ public class MCSimulation {
     }
     
     
-    private SimulationResults computeResults(double[] totalDurs) throws Exception {
+    private SimulationResults computeResults(double[] totalDurs) {
         
         double totMean = 0;
         double totVar = 0;
@@ -594,7 +594,7 @@ public class MCSimulation {
      * Calculates simulation results.
      * Returns null on error
      **/
-    public SimulationResults results() throws Exception {
+    public SimulationResults results() {
                 
         try {
             totalDurations = new double[repetitions];
