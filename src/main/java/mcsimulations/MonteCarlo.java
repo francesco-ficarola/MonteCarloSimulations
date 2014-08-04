@@ -26,12 +26,12 @@ public class MonteCarlo {
 
     public static void main(String[] args) {
         
-        String verbose = "";
+        boolean verbose = false;
         File f = null;
         
         for ( String arg : args ) {
             if( arg.equals("-v") || arg.equals("--verbose") )
-                verbose= arg;
+                verbose = true;
             else if( arg.equals("-h") || arg.equals("--help") ) {
                 showHelp();
                 System.exit(-1);
