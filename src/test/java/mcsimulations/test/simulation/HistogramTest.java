@@ -15,8 +15,6 @@ import static org.junit.Assert.*;
  */
 public class HistogramTest {
 
-    ;
-
     @Test
     public void test1() {
         final int INTERVALS = 2;
