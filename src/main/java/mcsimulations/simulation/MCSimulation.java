@@ -24,7 +24,6 @@ import jsc.distributions.Exponential;
 import umontreal.iro.lecuyer.randvar.TriangularGen;
 import umontreal.iro.lecuyer.rng.LFSR113;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 
 import java.io.File;
 import java.util.Collections;
@@ -432,7 +431,7 @@ public class MCSimulation {
     }
     
         
-    public double computePERT_CPN() {
+    private double computePERT_CPN() {
         
         int colCheck = 0;
         int index_array = 0;
@@ -603,24 +602,8 @@ public class MCSimulation {
      * Calculates simulation results.
      * Returns null on error
      **/
-    public SimulationResults results() throws Exception {
-                
-        try {
-            totalDurations = new double[repetitions];
-        }
-        catch(OutOfMemoryError e) {
-            JOptionPane.showMessageDialog(null,
-                "<html><body>For repetitions more than 7 million and<br>" +
-                "less than 100 million please restart the<br>" +
-                "application with the following java parameters:<br><br>" +
-                "7~10 million: -Xmx128m (RAM 128MB+)<br>" +
-                "10~60 million: -Xmx512m (RAM 512MB+)<br>" +
-                "60~100 million: -Xmx1024m (RAM 1024MB+)</body></html>", "Error", 
-                JOptionPane.ERROR_MESSAGE);
-
-        	return null;
-        }
-          
+    public SimulationResults results() throws Exception {        
+        totalDurations = new double[repetitions];
 		return computeResults(totalDurations);        
     }
     

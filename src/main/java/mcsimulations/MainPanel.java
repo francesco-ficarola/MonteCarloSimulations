@@ -1777,6 +1777,7 @@ public class MainPanel extends JPanel {
 
                                     boolean errorOnSimulation = false;
                                     String errorMessage = "";
+                                    results = null;
                                     try {
                                         results = mcs.results();
                                     } catch(RuntimeException e1) {
@@ -1788,7 +1789,18 @@ public class MainPanel extends JPanel {
                                         e1.printStackTrace();
                                         errorOnSimulation = true;
                                         errorMessage = e1.getMessage();
-                                    } finally {
+                                    }
+									catch(OutOfMemoryError e) {
+										JOptionPane.showMessageDialog(null,
+										"<html><body>For repetitions more than 7 million and<br>" +
+										"less than 100 million please restart the<br>" +
+										"application with the following java parameters:<br><br>" +
+										"7~10 million: -Xmx128m (RAM 128MB+)<br>" +
+										"10~60 million: -Xmx512m (RAM 512MB+)<br>" +
+										"60~100 million: -Xmx1024m (RAM 1024MB+)</body></html>", "Error", 
+										JOptionPane.ERROR_MESSAGE);
+									}
+                                    finally {
                                         stopSimulations = System.currentTimeMillis();
                                     }
 
