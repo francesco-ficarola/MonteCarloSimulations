@@ -17,7 +17,7 @@ package mcsimulations; /**
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-import mcsimulations.simulation.MCSimulation;
+import mcsimulations.simulation.MCSimulation;	
 import mcsimulations.simulation.SimulationResults;
 
 import java.io.*;
@@ -26,8 +26,12 @@ import java.util.List;
 import java.util.regex.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+
+import java.lang.Enum;
+
 import java.awt.*;
 import java.awt.event.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -879,13 +883,181 @@ public class MainPanel extends JPanel {
         
     }
 
-    
-    
-    //*************************************************
-    //*** METODO getDataAct() *************************
-    //*************************************************
-    public ArrayList<ArrayList<Object>> getDataAct() {
+    private List<List<Object>> getDataAct() {
+    	List<Integer> activityId = new ArrayList<Integer>(activitiesNumber);
+    	List<String> activityDesc = new ArrayList<String>(activitiesNumber);
+    	List<String> activityPrecedence = new ArrayList<String>(activitiesNumber);
+    	List<String> activityDistribution = new ArrayList<String>(activitiesNumber);
+    	List<List<Integer>> activityDistributionParam = new ArrayList<List<Integer>>(activitiesNumber);
+    	
+    	for( int i = 0; i < activitiesNumber; i++) {
+    		activityId.add( Integer.parseInt(((JTextField)activitiesArray.get(i).get(0)).getText()) );
+    		activityDesc.add( ((JTextField)activitiesArray.get(i).get(1)).getText() );
+    		activityPrecedence.add( ((JTextField)activitiesArray.get(i).get(2)).getText() );
+    		
+    		String distS = ((JComboBox)activitiesArray.get(i).get(3)).getSelectedItem().toString();
+    		activityDistribution.add( distS );
+    		
+    		Distribution dist = 
+    			Distribution.valueOf(
+    				distS.toUpperCase() );
+    		
+    		List<Integer> paramL = new ArrayList<Integer>(dist.getNumGUIParams());
+    		
+    		for( int p = 0; p < dist.getNumGUIParams(); p++ ) {
+    			paramL.add( Integer.parseInt(((JTextField)(((JPanel)activitiesArray.get(i).get(4)).getComponent(p))).getText()) );
+    		}
+    		
+    		activityDistributionParam.add( paramL );
+    	}
+    	
+    	DataActResponse resp = Tools.getDataAct(activitiesNumber, activityId,
+    											activityDesc, activityPrecedence,
+                                                activityDistribution, activityDistributionParam);
         
+        	
+    	for( int i = 0; i < activitiesNumber; i++) {
+    		// Update precedences field
+    		updatePrecedencesField((int[]) resp.getDataActivities().get(i).get(2), i, activitiesArray);
+        }
+ 
+        repaint();
+        
+        //----------------------------------------------------------
+        //Controllo errori e restituzione dataActArray o errActArray
+        //----------------------------------------------------------
+        if (resp.getParamExceptions().size() == 0 && resp.getPrecErrors().size() == 0 && resp.getCyclicErrors().size() == 0 && resp.getParamErrors().size() == 0) {
+
+            return resp.getDataActivities();
+
+        } else {
+
+            // OUTPUT ECCEZIONI ED ERRORI
+            if (verbose) {
+                System.out.println("Exceptions of Parameters: " + resp.getParamExceptions().size());
+                System.out.println("Error of Parameters: " + resp.getParamErrors().size());
+                System.out.println("Errors of Precedences: " + resp.getPrecErrors().size());
+                System.out.println("Errors of cyclic Activities: " + resp.getCyclicErrors().size());
+            }
+
+
+            //Restituzione numero di errori e le attività che li contengono
+            if (resp.getPrecErrors().size() > 0) {
+                StringBuffer strBuff = new StringBuffer();
+                for (int i = 0; i < resp.getPrecErrors().size(); i++) {
+                    if (i != resp.getPrecErrors().size() - 1) {
+                        strBuff.append(resp.getPrecErrors().get(i) + 1);
+                        strBuff.append("; ");
+                    } else strBuff.append(resp.getPrecErrors().get(i) + 1);
+                }
+
+                if (verbose) {
+                    System.out.println("ERROR: Precedences out of Bounds in the following Activities: " + strBuff.toString());
+                }
+                
+				JOptionPane.showMessageDialog(null,
+						"<html><body>Precedences out of Bounds in the following Activities:<br>" +
+								"" + strBuff.toString() + "</body></html>", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				
+            }
+
+            if (resp.getParamExceptions().size() > 0) {
+                StringBuffer strBuff = new StringBuffer();
+                for (int i = 0; i < resp.getParamExceptions().size(); i++) {
+                    if (i != resp.getParamExceptions().size() - 1) {
+                        strBuff.append(resp.getParamExceptions().get(i) + 1);
+                        strBuff.append("; ");
+                    } else strBuff.append(resp.getParamExceptions().get(i) + 1);
+                }
+
+
+                if (verbose) {
+                    System.out.println("ERROR: The following Activities contain parameters with an invalid format (it must be an integer): " + strBuff.toString());
+                }
+			 
+				JOptionPane.showMessageDialog(null,
+						"<html><body>The following Activities contain parameters<br>" +
+								"with an invalid format (it must be an integer):<br>" +
+								"" + strBuff.toString() + "</body></html>", "Error",
+						JOptionPane.ERROR_MESSAGE);
+            }
+
+            if (resp.getParamErrors().size() > 0) {
+                StringBuffer strBuff = new StringBuffer();
+                for (int i = 0; i < resp.getParamErrors().size(); i++) {
+                    if (i != resp.getParamErrors().size() - 1) {
+                        strBuff.append(resp.getParamErrors().get(i) + 1);
+                        strBuff.append("; ");
+                    } else strBuff.append(resp.getParamErrors().get(i) + 1);
+                }
+
+
+                if (verbose) {
+                    System.out.println("ERROR: The following Activities contain incorrect parameters: " + strBuff.toString());
+                }
+                
+				JOptionPane.showMessageDialog(null,
+						"<html><body>The following Activities contain incorrect parameters:<br>" +
+								"" + strBuff.toString() + "</body></html>", "Error",
+						JOptionPane.ERROR_MESSAGE);
+
+            }
+
+            if (resp.getCyclicErrors().size() > 0) {
+                StringBuffer strBuff = new StringBuffer();
+                for (int i = 0; i < resp.getCyclicErrors().size(); i++) {
+                    if (i != resp.getCyclicErrors().size() - 1) {
+                        strBuff.append(resp.getCyclicErrors().get(i) + 1);
+                        strBuff.append("; ");
+                    } else strBuff.append(resp.getCyclicErrors().get(i) + 1);
+                }
+
+
+                if (verbose) {
+                    System.out.println("ERROR: The following Activities are cyclical: " + strBuff.toString());
+                }
+
+				JOptionPane.showMessageDialog(null,
+						"<html><body>The following Activities are cyclical:<br>" +
+								"" + strBuff.toString() + "</body></html>", "Error",
+						JOptionPane.ERROR_MESSAGE);
+
+            }
+
+            //errActArray: array fittizio per il controllo nel listener
+            List<List<Object>> errActArray = new ArrayList<List<Object>>();
+            errActArray.add(new ArrayList<Object>());
+            errActArray.get(0).add(-1);
+
+            return errActArray;
+        }
+
+    }
+    
+    
+    private void updatePrecedencesField(int[] precArray, int currentActivity, ArrayList<ArrayList<Object>> activitiesArray1) {
+
+        if (precArray[0] != -1) {
+            StringBuffer strBuff = new StringBuffer();
+
+            for (int i = 0; i < precArray.length; i++) {
+                if (i != precArray.length - 1) {
+                    strBuff.append(precArray[i]);
+                    strBuff.append("; ");
+                } else {
+                    strBuff.append(precArray[i]);
+                }
+            }
+
+            ((JTextField) activitiesArray1.get(currentActivity).get(2)).setText(strBuff.toString());
+        } else
+            ((JTextField) activitiesArray1.get(currentActivity).get(2)).setText("");
+
+    }
+
+        
+	private ArrayList<ArrayList<Object>> getDataActOLD() {
         //occurrences: occorrence di numeri uguali in extractIntArray
         int occurrences = 0;
         
@@ -978,7 +1150,7 @@ public class MainPanel extends JPanel {
                 }
 
                 //Aggiornamento campi (JTextField) precedences
-                Tools.updatePrecedencesField(precedencesInt, i, activitiesArray);
+                updatePrecedencesField(precedencesInt, i, activitiesArray);
                 
                 //------------------------------------------
                 //Inserimento elemento 2: precedences
@@ -1225,7 +1397,7 @@ public class MainPanel extends JPanel {
     //*************************************************
     public void saveProject() {
         
-        ArrayList<ArrayList<Object>> saveActArray = getDataAct();
+        List<List<Object>> saveActArray = getDataAct();
         
         if(saveActArray.get(0).size() > 1) {
             JFileChooser chooser = new JFileChooser();
@@ -1315,7 +1487,7 @@ public class MainPanel extends JPanel {
 
                     //Aggiornamento prima attività
                     ((JTextField)activitiesArray.get(0).get(1)).setText((String)openActArray.get(0).get(1));
-                    Tools.updatePrecedencesField((int[]) openActArray.get(0).get(2), 0, activitiesArray);;
+                    updatePrecedencesField((int[]) openActArray.get(0).get(2), 0, activitiesArray);
 
                     if(((String)openActArray.get(0).get(3)).equals("Uniform")) {
 
@@ -1369,7 +1541,7 @@ public class MainPanel extends JPanel {
                         addActivity();
 
                         ((JTextField)activitiesArray.get(i).get(1)).setText((String)openActArray.get(i).get(1));
-                        Tools.updatePrecedencesField((int[]) openActArray.get(i).get(2), i, activitiesArray);
+                        updatePrecedencesField((int[]) openActArray.get(i).get(2), i, activitiesArray);
 
                         if(((String)openActArray.get(i).get(3)).equals("Uniform")) {
 
@@ -1694,7 +1866,7 @@ public class MainPanel extends JPanel {
 
                         if(numRepetitions > 0) {
 
-                            ArrayList<ArrayList<Object>> dataActArray = new ArrayList<ArrayList<Object>>();
+                            List<List<Object>> dataActArray = new ArrayList<List<Object>>();
                             dataActArray = getDataAct();
 
                             if(dataActArray.get(0).size() > 1) {

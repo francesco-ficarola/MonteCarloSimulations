@@ -18,7 +18,7 @@ public class ActivitiesBuilder {
 
 	private int iActivity = -1;
 	private ArrayList<Object> currActivity;
-	private ArrayList<ArrayList<Object>> dataActArray = new ArrayList<ArrayList<Object>>();
+	private List<List<Object>> dataActArray = new ArrayList<List<Object>>();
 
 	public ActivitiesBuilder() {};
 
@@ -76,7 +76,7 @@ public class ActivitiesBuilder {
 		return this;
 	}
 
-	public ArrayList<ArrayList<Object>> build() {
+	public List<List<Object>> build() {
 		return dataActArray;
 	};
 
