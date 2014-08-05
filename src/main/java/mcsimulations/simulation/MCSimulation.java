@@ -40,7 +40,7 @@ public class MCSimulation {
     private int repetitions;
     
     //ArrayList delle attività
-    private ArrayList<ArrayList<Object>> dataActArray;
+    private List<List<Object>> dataActArray;
     
     //Matrice d'adiacenza
     private int[][] matrix;
@@ -88,7 +88,7 @@ public class MCSimulation {
     private double[] totalDurations;
     
     
-    public MCSimulation(boolean s, int repet, ArrayList<ArrayList<Object>> actArray) {
+    public MCSimulation(boolean s, int repet, List<List<Object>> actArray) {
         
     	// ToDo make verbose boolean
         verbose = s;

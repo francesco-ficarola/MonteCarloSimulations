@@ -17,7 +17,7 @@ public class MCSimulationTest {
 	
 	@Test
 	public void test1activity() throws Exception {
-		ArrayList<ArrayList<Object>> activities = new ActivitiesBuilder().newActivity().build();
+		List<List<Object>> activities = new ActivitiesBuilder().newActivity().build();
 
 		MCSimulation mcs = new MCSimulation(NON_VERBOSE, REPETITIONS_DEFAULT, activities);
 
@@ -34,7 +34,7 @@ public class MCSimulationTest {
 
 	@Test
 	public void test2activities() throws Exception {
-		ArrayList<ArrayList<Object>> activities = 
+		List<List<Object>> activities = 
 			new ActivitiesBuilder()
 				.newActivity()
 				.newActivity().addPrecedent(1)
@@ -59,7 +59,7 @@ public class MCSimulationTest {
 		
 		int[] gaussParams = new  int[]{ 100, 1 }; // mean, std dev
 		
-		ArrayList<ArrayList<Object>> activities = 
+		List<List<Object>> activities = 
 			new ActivitiesBuilder()
 				.newActivity()
 				.newActivity().addPrecedent(1)
