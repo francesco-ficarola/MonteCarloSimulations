@@ -1,4 +1,4 @@
-package mcsimulations; /**
+package mcsimulations.simulation; /**
  *  Monte Carlo Simulations
  *  Copyright (C) 2008  Francesco Ficarola
  *  E-Mail: francesco.ficarola<at>gmail.com
@@ -293,13 +293,13 @@ public class MCSimulation {
             } else
             
             if(dataActArray.get(topologicalArray.get(i).get(0)-1).get(3) == "Beta") {
-                
+
                 Beta beta = new Beta(((int[])dataActArray.get(topologicalArray.get(i).get(0)-1).get(4))[0],
                                     ((int[])dataActArray.get(topologicalArray.get(i).get(0)-1).get(4))[1]);
                 durations[i] = beta.random();
                 if(durations[i]<0)
                     durations[i] = 0;
-                
+
             } else
             
             if(dataActArray.get(topologicalArray.get(i).get(0)-1).get(3) == "Gaussian") {
@@ -331,8 +331,7 @@ public class MCSimulation {
         
         
     }
-    
-    
+
     public void makeInDegree() {
         
         for(int i=0; i<n; i++) {
