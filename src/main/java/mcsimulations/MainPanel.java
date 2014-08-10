@@ -1760,7 +1760,7 @@ public class MainPanel extends JPanel {
             if(e.getSource() == aboutButton) {
                 
                 JOptionPane.showMessageDialog(null,
-                    "<html><body>Monte Carlo Simulations<br>" +
+                    "<html><body>Monte Carlo Simulations - v1.1<br>" +
                     "Copyright (C) 2008  Francesco Ficarola<br>" +
                     "E-Mail: francesco.ficarola@gmail.com<br>" +
                     "<br>" +
